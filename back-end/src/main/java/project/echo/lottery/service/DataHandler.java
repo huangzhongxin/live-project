@@ -1,12 +1,10 @@
-package function;
+package project.echo.lottery.service;
 
-import entity.PersonEntity;
-import jxl.Sheet;
-import jxl.Workbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import project.echo.lottery.pojo.PersonEntity;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,9 +19,8 @@ public class DataHandler {
     public static Map<String,Integer> map1=new HashMap<String, Integer>(); //QQ+类型  0学生  1助教/老师
     public static Map<String,Integer> map2=new HashMap<String, Integer>(); //QQ+发言次数
 
-    public static void init() throws Exception {
-        String filepath = DataHandler.class.getClassLoader().getResource("Data.xlsx").getPath();
-//        System.out.println(filepath);
+    public static void init(String filepath) throws Exception {
+//        String filepath = "C:\\Users\\KWM\\Desktop\\chatRecords.xlsx";
         file = new File(filepath);
 
         //Read Excel
@@ -74,6 +71,6 @@ public class DataHandler {
                 count=1;
             map2.put(qq,count);
         }
-        workbook.close();
+
     }
 }

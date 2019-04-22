@@ -1,6 +1,5 @@
-package entity;
+package project.echo.lottery.pojo;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -63,7 +62,7 @@ public class PersonEntity {
     @Override
     public String toString() {
         return "PersonEntity{" +
-                "date=" + calendar.getTime().toString() +
+                "date=" + getDate().toString() +
                 ", name='" + name + '\'' +
                 ", qq_number='" + qq_number + '\'' +
                 ", context='" + context + '\'' +
