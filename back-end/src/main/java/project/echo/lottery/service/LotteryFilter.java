@@ -99,12 +99,10 @@ public class LotteryFilter {
             PersonEntity p = personList.get(i);
 
             if (endTime.compareTo(p.getDate()) < 0) {
-                // if end position=-1 means first assignment, else not
 //                endPosition = endPosition == -1 ? i : endPosition;
                 continue;
             }
             if (startTime.compareTo(p.getDate()) > 0) {
-//                startPosition = startPosition == -1 ? i : startPosition;
                 continue;
             }
 
