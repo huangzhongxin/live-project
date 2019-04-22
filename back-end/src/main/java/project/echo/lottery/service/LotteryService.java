@@ -73,8 +73,6 @@ public class LotteryService {
         PrintWriter writer = null;
         try {
             writer = new PrintWriter(filePath, "UTF-8");
-            writer.println("The first line");
-            writer.println("The second line");
             for (Map award : awards) {
                 for (int i = 0; i < (Integer) award.get("number"); ++i) {
                     writer.println(
