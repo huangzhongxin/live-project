@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "axios": "^0.18.0",
+    "flyio": "^0.6.14"
+  }
+}

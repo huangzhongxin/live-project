@@ -1,0 +1,1 @@
+直接运行Aanlysis.py脚本，然后输入要分析的文本，如PlusA.txt，然后会生成三张图chatTime.png,contentCloud.py,contentCloud.png，分别为发言时间段人数图，发言次数图，内容云图

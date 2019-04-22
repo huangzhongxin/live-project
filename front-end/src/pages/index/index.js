@@ -1,6 +1,7 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Image, Text, ScrollView } from '@tarojs/components'
 import { AtInput, AtTabs, AtTabsPane, AtSwitch, AtButton, AtCard } from 'taro-ui'
+import axios from 'axios'
 import './index.scss'
 
 import empty from '../../assert/empty.png'
@@ -12,52 +13,11 @@ export default class Index extends Component {
   }
   constructor() {
     super(...arguments)
+    
+    axios.get("http://127.0.0.1:8080/lottery/hello")
     this.state = {
       current: 0,
-      result: [
-        {
-          "name": "laptop",
-          "number": 1,
-          "list": [
-            {
-              "qq": "2759947912",
-              "name": "计三-张沐栎"
-            }
-          ]
-        },
-        {
-          "name": "mobile phone",
-          "number": 2,
-          "list": [
-            {
-              "qq": "724043054",
-              "name": "计4－后敬甲"
-            },
-            {
-              "qq": "1357670946",
-              "name": "计4-蒋熊"
-            }
-          ]
-        },
-        {
-          "name": "snack",
-          "number": 3,
-          "list": [
-            {
-              "qq": "i@cstdio.cn",
-              "name": "计4-苏路明"
-            },
-            {
-              "qq": "563541595",
-              "name": "计二-郭俊彦"
-            },
-            {
-              "qq": "835599660",
-              "name": "计5 陈俞辛"
-            }
-          ]
-        }
-      ],
+      result: [],
       filterTeacher: false,
       filtercountLimit: false,
       filterRepeat: false,
@@ -112,11 +72,6 @@ export default class Index extends Component {
         });
         break;
       case 'countLimit':
-        this.setState({
-          countLimit: value
-        });
-        break;
-      case 'repeat':
         this.setState({
           countLimit: value
         });
@@ -176,7 +131,12 @@ export default class Index extends Component {
             filtercountLimit: !this.state.filtercountLimit
           })
         }
-        break
+        break;
+      case 'repeat':
+        this.setState({
+          filterRepeat: !this.state.filterRepeat
+        });
+        break;
     }
   }
   handleawardList = (type) => {
@@ -238,7 +198,7 @@ export default class Index extends Component {
       });
       return;
     }
-    
+
     if (!this.verifyDateTime(this.state.start)) {
       Taro.showModal({
         title: '开始时间格式有误!',
@@ -253,7 +213,7 @@ export default class Index extends Component {
       })
       return;
     }
-    
+
     var flag = true;
     this.state.award.forEach((value, index) => {
       if (value.name.trim() === '') {
@@ -263,8 +223,8 @@ export default class Index extends Component {
         });
         flag = false;
         return;
-      } 
-      if (/^\+?[1-9][0-9]*$/.test(value.number)) {
+      }
+      if (!/^\+?[1-9][0-9]*$/.test(parseInt(value.number))) {
         Taro.showModal({
           title: '输入有误!',
           content: `奖项${index}的奖品数不为正整数!`
@@ -279,9 +239,9 @@ export default class Index extends Component {
       requesting: true
     })
     const { kw, writting, filterRepeat, filterTeacher, countLimit, start, end, award } = this.state
-    Taro.request({
-      url: 'http://127.0.0.1:8080',
-      data: {
+    
+    axios.post('http://139.199.58.232:8080/lottery',{
+      params: {
         keyWord: kw,
         writting: writting,
         filterTeacher: filterTeacher,
@@ -330,7 +290,7 @@ export default class Index extends Component {
           <View key={index}>
             <AtInput
               border={false}
-              name='value'
+              name={`award${index}`}
               title={'奖项' + index}
               type='text'
               placeholder={'请输入奖项' + index}
@@ -339,7 +299,7 @@ export default class Index extends Component {
             />
             <AtInput
               border={false}
-              name='value'
+              name={`awardnumber${index}`}
               title={'奖项' + index + '人数'}
               type='number'
               placeholder={'请输入奖项' + index + '人数'}
@@ -402,7 +362,7 @@ export default class Index extends Component {
                 >
                   <AtInput
                     border={false}
-                    name='value'
+                    name='kw'
                     title='关键词'
                     type='text'
                     placeholder='请输入关键词'
@@ -411,7 +371,7 @@ export default class Index extends Component {
                   />
                   <AtInput
                     border={false}
-                    name='value'
+                    name='writting'
                     title='活动文案'
                     type='text'
                     placeholder='请输入文案'
@@ -429,7 +389,7 @@ export default class Index extends Component {
 
                   <AtInput
                     border={false}
-                    name='value'
+                    name='start'
                     title='开始时间'
                     type='text'
                     placeholder='格式： 2019-04-23 12:00'
@@ -438,7 +398,7 @@ export default class Index extends Component {
                     onBlur={this.handleBlur.bind(this, 'start')}
                   />
                   <AtInput
-                    name='value'
+                    name='end'
                     title='结束时间'
                     type='text'
                     placeholder='格式： 2019-04-23 12:00'
