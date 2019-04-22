@@ -30,41 +30,42 @@ public class LotteryController {
     }
 
     @PostMapping
-    public Response lottery(@RequestBody Map<String,Object> info){
-        System.out.println(info);
+    public Response lottery(@RequestBody Map<String,Object> config){
+//        System.out.println(config);
         Map<String,Object> result =new HashMap<>();
 
-        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        Date startTime= null;
-        Date endTime= null;
-        try {
-            startTime = sdf.parse((String)info.get("startTime"));
-            endTime = sdf.parse((String)info.get("endTime"));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        Boolean filterTeacher=(Boolean)info.get("filterTeacher");
-        Integer countLimit=(Integer)info.get("countLimit");
-        String keyWord=(String)info.get("keyWord");
-        String writing=(String)info.get("writing");
-        Boolean filterRepeat=(Boolean)info.get("filterRepeat");
-        List<Award> jx=(List<Award>)info.get("jx");
+//        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm");
+//        Date startTime= null;
+//        Date endTime= null;
+//        try {
+//            startTime = sdf.parse((String)config.get("startTime"));
+//            endTime = sdf.parse((String)config.get("endTime"));
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
+//        Boolean filterTeacher=(Boolean)config.get("filterTeacher");
+//        Integer countLimit=(Integer)config.get("countLimit");
+//        String keyWord=(String)config.get("keyWord");
+//        String writing=(String)config.get("writing");
+//        Boolean filterRepeat=(Boolean)config.get("filterRepeat");
+//        List<Award> jx=(List<Award>)config.get("award");
+//
+//        System.out.println("startTime=>"+startTime);
+//        System.out.println("endTime=>"+endTime);
+//        System.out.println("filterTeacher=>"+filterTeacher);
+//        System.out.println("countLimit=>"+countLimit);
+//        System.out.println("keyWord=>"+keyWord);
+//        System.out.println("writing=>"+writing);
+//        System.out.println("filterRepeat=>"+filterRepeat);
+//        System.out.println("jx=>"+jx);
 
-        System.out.println("startTime=>"+startTime);
-        System.out.println("endTime=>"+endTime);
-        System.out.println("filterTeacher=>"+filterTeacher);
-        System.out.println("countLimit=>"+countLimit);
-        System.out.println("keyWord=>"+keyWord);
-        System.out.println("writing=>"+writing);
-        System.out.println("filterRepeat=>"+filterRepeat);
-        System.out.println("jx=>"+jx);
-
+        List<Map<String,Object>> list=null;
         try {
-            lotteryService.lottery();
+            list=lotteryService.lottery(config);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return new Response(true,200,"",result);
+        return new Response(true,200,"",list);
     }
 }

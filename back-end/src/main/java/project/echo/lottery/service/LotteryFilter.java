@@ -112,18 +112,6 @@ public class LotteryFilter {
                 filteredList.add(0, p);
             }
         }
-        Integer sum = 0;
-
-        System.out.println("============ chat count ====================");
-        for (Object key : durationChatCount.keySet()) {
-            System.out.println(key + "=>" + durationChatCount.get(key));
-            sum += durationChatCount.get(key);
-        }
-
-        System.out.println("============ chat count ====================");
-        for (PersonEntity p : filteredList) {
-            System.out.println(p);
-        }
 
         return filteredList;
     }
