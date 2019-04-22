@@ -1,7 +1,11 @@
 package project.echo.lottery.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import project.echo.lottery.pojo.Award;
+import project.echo.lottery.pojo.Response;
+import project.echo.lottery.service.LotteryFilter;
+import project.echo.lottery.service.LotteryService;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -15,6 +19,9 @@ import java.util.Map;
 @RequestMapping("/lottery")
 public class LotteryController {
 
+    @Autowired
+    LotteryService lotteryService;
+
     @GetMapping("/hello")
     public Map<String,Object> sayHello(){
         Map<String,Object> result=new HashMap<>();
@@ -23,7 +30,7 @@ public class LotteryController {
     }
 
     @PostMapping
-    public Map<String,Object> lottery(@RequestBody Map<String,Object> info){
+    public Response lottery(@RequestBody Map<String,Object> info){
         System.out.println(info);
         Map<String,Object> result =new HashMap<>();
 
@@ -39,7 +46,7 @@ public class LotteryController {
         Boolean filterTeacher=(Boolean)info.get("filterTeacher");
         Integer countLimit=(Integer)info.get("countLimit");
         String keyWord=(String)info.get("keyWord");
-        String wenan=(String)info.get("wenan");
+        String writing=(String)info.get("writing");
         Boolean filterRepeat=(Boolean)info.get("filterRepeat");
         List<Award> jx=(List<Award>)info.get("jx");
 
@@ -48,9 +55,16 @@ public class LotteryController {
         System.out.println("filterTeacher=>"+filterTeacher);
         System.out.println("countLimit=>"+countLimit);
         System.out.println("keyWord=>"+keyWord);
-        System.out.println("wenan=>"+wenan);
+        System.out.println("writing=>"+writing);
         System.out.println("filterRepeat=>"+filterRepeat);
         System.out.println("jx=>"+jx);
-        return result;
+
+        try {
+            lotteryService.lottery();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return new Response(true,200,"",result);
     }
 }
