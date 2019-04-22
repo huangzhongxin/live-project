@@ -52,7 +52,7 @@
   width: 300px;
   height: 140px;
   margin-top: 200px;
-  margin-left: 200px
+  margin-left: 200px;
 }
 
 .picker {
@@ -65,11 +65,19 @@
   flex-direction: row;
 }
 
-.change{
-    border-bottom: 1px #999;
-    color: rgb(97, 160, 255)
+.change {
+  border-bottom: 1px #999;
+  color: rgb(52, 157, 218);
 }
 
-.picker{
-    font-size: 25px;
+.picker {
+  font-size: 25px;
+}
+
+.download {
+  color: rgb(52, 157, 218);
+  font-size: 28px;
+  border-bottom: 1px rgb(52, 157, 218);
+  margin-left: 38%;
+  margin-bottom: 20px;
 }

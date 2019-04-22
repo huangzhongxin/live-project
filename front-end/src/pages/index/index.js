@@ -15,26 +15,54 @@ export default class Index extends Component {
     this.state = {
       current: 0,
       result: [
-        { name: 'xxx', qq: '111111111', jx: 'xxx' },
-        { name: 'xxx', qq: '111111111', jx: 'xxx' },
-        { name: 'xxx', qq: '111111111', jx: 'xxx' },
-        { name: 'xxx', qq: '111111111', jx: 'xxx' },
-        { name: 'xxx', qq: '111111111', jx: 'xxx' },
-        { name: 'xxx', qq: '111111111', jx: 'xxx' },
-        { name: 'xxx', qq: '111111111', jx: 'xxx' },
-        { name: 'xxx', qq: '111111111', jx: 'xxx' },
-        { name: 'xxx', qq: '111111111', jx: 'xxx' },
-        { name: 'xxx', qq: '111111111', jx: 'xxx' },
-        { name: 'xxx', qq: '111111111', jx: 'xxx' },
-        { name: 'xxx', qq: '111111111', jx: 'xxx' },
-        { name: 'xxx', qq: '111111111', jx: 'xxx' },
-        { name: 'xxx', qq: '111111111', jx: 'xxx' },
+        {
+          "name": "laptop",
+          "number": 1,
+          "list": [
+            {
+              "qq": "2759947912",
+              "name": "计三-张沐栎"
+            }
+          ]
+        },
+        {
+          "name": "mobile phone",
+          "number": 2,
+          "list": [
+            {
+              "qq": "724043054",
+              "name": "计4－后敬甲"
+            },
+            {
+              "qq": "1357670946",
+              "name": "计4-蒋熊"
+            }
+          ]
+        },
+        {
+          "name": "snack",
+          "number": 3,
+          "list": [
+            {
+              "qq": "i@cstdio.cn",
+              "name": "计4-苏路明"
+            },
+            {
+              "qq": "563541595",
+              "name": "计二-郭俊彦"
+            },
+            {
+              "qq": "835599660",
+              "name": "计5 陈俞辛"
+            }
+          ]
+        }
       ],
       filterTeacher: false,
-      filterUnActive: false,
+      filtercountLimit: false,
       filterRepeat: false,
-      jxIndexList: [0, 1, 2],
-      jx: [
+      awardIndexList: [0, 1, 2],
+      award: [
         { name: '', number: 0 },
         { name: '', number: 0 },
         { name: '', number: 0 }
@@ -43,15 +71,39 @@ export default class Index extends Component {
       start: '',
       end: '',
       kw: '',
-      wenan: '',
-      unactive: 0
+      writting: '',
+      countLimit: 0
     }
   }
+  verifyDateTime = (value) => {
+    const dt = value.split(" ");
+    if (dt.length !== 2) return false
+    return this.verifyDate(dt[0]) && this.verifyTime(dt[1])
+  }
+
+  verifyTime = (value) => {
+    if (!/^\d{1,2}:\d{1,2}$/.test(value)) return false
+
+    const time = value.split(':').map(num => +num)
+
+    if (time[0] < 0 || time[0] > 23) return false
+    if (time[1] < 0 || time[1] > 59) return false
+
+    return true
+  }
+
+  verifyDate = (date) => {
+    if (!date) return false
+    date = new Date(date.replace(/-/g, '/'))
+    // eslint-disable-next-line no-restricted-globals
+    return isNaN(date.getMonth()) ? false : date
+  }
+
   handleInputChange(name, value) {
     switch (name) {
-      case 'wenan':
+      case 'writting':
         this.setState({
-          wenan: value
+          writting: value
         });
         break;
       case 'kw':
@@ -59,14 +111,14 @@ export default class Index extends Component {
           kw: value
         });
         break;
-      case 'unactive':
+      case 'countLimit':
         this.setState({
-          unactive: value
+          countLimit: value
         });
         break;
       case 'repeat':
         this.setState({
-          unactive: value
+          countLimit: value
         });
         break;
       case 'start':
@@ -82,24 +134,23 @@ export default class Index extends Component {
     }
     return value
   }
+
   handleInputChange2(name, index, value) {
-    console.log([`${this.state.jx[index].number}`])
-    const jx = this.state.jx
+    const award = this.state.award
     switch (name) {
-      case 'jxm':
-        jx[index].name = value
+      case 'awardm':
+        award[index].name = value
         this.setState({
-          jx: jx
+          award: award
         });
         break;
-      case 'jxr':
-        jx[index].number = value
+      case 'awardr':
+        award[index].number = value
         this.setState({
-          jx: jx
+          award: award
         });
         break;
     }
-    // 在小程序中，如果想改变 value 的值，需要 `return value` 从而改变输入框的当前值
     return value
   }
   handleClick(value) {
@@ -114,70 +165,145 @@ export default class Index extends Component {
           filterTeacher: !this.state.filterTeacher
         })
         break
-      case 'unActive':
-        this.setState({
-          filterUnActive: !this.state.filterUnActive
-        })
+      case 'countLimit':
+        if (this.state.filtercountLimit === true) {
+          this.setState({
+            filtercountLimit: !this.state.filtercountLimit,
+            countLimit: 0
+          })
+        } else {
+          this.setState({
+            filtercountLimit: !this.state.filtercountLimit
+          })
+        }
         break
     }
   }
-  handleJxList = (type) => {
-    const jxList = this.state.jxIndexList;
-    const jx = this.state.jx
+  handleawardList = (type) => {
+    const awardList = this.state.awardIndexList;
+    const award = this.state.award
     switch (type) {
       case 'add':
-        jxList.push(jx.length)
-        jx.push({ name: '', number: 0 })
+        awardList.push(award.length)
+        award.push({ name: '', number: 0 })
         this.setState({
-          jxIndexList: jxList,
-          jx: jx
+          awardIndexList: awardList,
+          award: award
         })
         break;
       case 'del':
-        if (jxList.length === 1) {
+        if (awardList.length === 1) {
           Taro.showModal({
             title: '无法删除',
             content: '至少需要一个奖项'
           })
           return;
         }
-        jxList.pop()
-        jx.pop()
+        awardList.pop()
+        award.pop()
         this.setState({
-          jxIndexList: jxList,
-          jx: jx
+          awardIndexList: awardList,
+          award: award
         })
         break;
     }
   }
 
+  handleBlur = (type, value) => {
+    if (!this.verifyDateTime(value)) {
+      Taro.showModal({
+        title: '时间格式有误!',
+        content: '请确保时间格式为 \r\nYYYY-MM-DD HH:SS，如：2019-04-23 12:00'
+      })
+      this.setState({
+        [`${type}`]: ''
+      })
+      return;
+    }
+  }
+
   request = () => {
+    if (this.state.kw.trim() === '') {
+      Taro.showModal({
+        title: '输入不完整!',
+        content: '请输入关键词!'
+      });
+      return;
+    }
+    this.state.kw.replace('#', ''); // 去除#
+    if (this.state.writting.trim() === '') {
+      Taro.showModal({
+        title: '输入不完整!',
+        content: '请输入活动文案!'
+      });
+      return;
+    }
+    
+    if (!this.verifyDateTime(this.state.start)) {
+      Taro.showModal({
+        title: '开始时间格式有误!',
+        content: '请确保时间格式为 \r\nYYYY-MM-DD HH:SS，如：2019-04-23 12:00'
+      })
+      return;
+    }
+    if (!this.verifyDateTime(this.state.end)) {
+      Taro.showModal({
+        title: '结束时间格式有误!',
+        content: '请确保时间格式为 \r\nYYYY-MM-DD HH:SS，如：2019-04-23 12:00'
+      })
+      return;
+    }
+    
+    var flag = true;
+    this.state.award.forEach((value, index) => {
+      if (value.name.trim() === '') {
+        Taro.showModal({
+          title: '输入不完整!',
+          content: `请输入奖项${index}的名称!`
+        });
+        flag = false;
+        return;
+      } 
+      if (/^\+?[1-9][0-9]*$/.test(value.number)) {
+        Taro.showModal({
+          title: '输入有误!',
+          content: `奖项${index}的奖品数不为正整数!`
+        });
+        flag = false;
+        return;
+      }
+    })
+    if (!flag) return;
+
     this.setState({
       requesting: true
     })
-    const { kw, wenan, filterRepeat, filterTeacher, filterUnActive, unactive, start, end, jx } = this.state
+    const { kw, writting, filterRepeat, filterTeacher, countLimit, start, end, award } = this.state
     Taro.request({
       url: 'http://127.0.0.1:8080',
       data: {
-        keyword: kw,
-        wenan: wenan,
+        keyWord: kw,
+        writting: writting,
         filterTeacher: filterTeacher,
-        filterUnActive: filterUnActive,
-        unactive: unactive,
+        countLimit: countLimit,
         filterRepeat: filterRepeat,
-        start: start,
-        end: end,
-        jx: JSON.stringify(jx)
+        startTime: start,
+        endTime: end,
+        award: JSON.stringify(award)
       }
-    }).then((data) => {
+    }).then(({ data }) => {
       this.setState({
-        result: data,
+        downloadUrl: data.file,
+        result: data.winners,
         current: 1
       })
       Taro.showToast({
         title: '抽奖完成'
       })
     })
+  }
+  download = () => {
+    Taro.redirectTo({ url: this.state.downloadUrl })
   }
 
   render() {
@@ -190,17 +316,16 @@ export default class Index extends Component {
     )
     const inputAvtive = (
       <AtInput
-        fontSize='20'
         name='value'
-        title='去掉活跃度低于'
+        title='过滤发言数少于的人'
         type='number'
         placeholder='0'
-        value={this.state.unactive}
-        onChange={this.handleInputChange.bind(this, 'unactive')}
+        value={this.state.countLimit}
+        onChange={this.handleInputChange.bind(this, 'countLimit')}
       />
     )
-    const jxView = (
-      this.state.jxIndexList.map((index) => {
+    const awardView = (
+      this.state.awardIndexList.map((index) => {
         return (
           <View key={index}>
             <AtInput
@@ -209,8 +334,8 @@ export default class Index extends Component {
               title={'奖项' + index}
               type='text'
               placeholder={'请输入奖项' + index}
-              value={this.state.jx[index]['name']}
-              onChange={this.handleInputChange2.bind(this, 'jxm', index)}
+              value={this.state.award[index]['name']}
+              onChange={this.handleInputChange2.bind(this, 'awardm', index)}
             />
             <AtInput
               border={false}
@@ -218,37 +343,44 @@ export default class Index extends Component {
               title={'奖项' + index + '人数'}
               type='number'
               placeholder={'请输入奖项' + index + '人数'}
-              value={this.state.jx[index]['number']}
-              onChange={this.handleInputChange2.bind(this, 'jxr', index)}
+              value={this.state.award[index]['number']}
+              onChange={this.handleInputChange2.bind(this, 'awardr', index)}
             />
           </View>
         )
       }))
 
     const resultView = (
-      <ScrollView
-        className='tabContent'
-        scrollY
-        scrollWithAnimation
-        lowerThreshold='20'
-        upperThreshold='20'
-        scrollTop='0'
-        style='height: 500px;'
-      >{
-          this.state.result.map((value => {
-            return (
-              <View key={value.qq} style='margin-bottom: 20px'>
-                <AtCard
-                  extra={value.qq}
-                  title={value.name}
-                >
-                  {value.jx}
-                </AtCard>
-              </View>
-            )
-          }))
-        }
-      </ScrollView>
+      <View className='result'>
+        <View onClick={this.download} className='download'>下载抽奖结果</View>
+        <ScrollView
+          className='tabContent'
+          scrollY
+          scrollWithAnimation
+          lowerThreshold='20'
+          upperThreshold='20'
+          scrollTop='0'
+          style='height: 430px;'
+        >{
+            this.state.result.map((value => {
+              return (
+                <View key={value.qq} style='margin-bottom: 20px'>
+                  <AtCard
+                    extra={'中奖人数：' + value.number}
+                    title={'奖项：' + value.name}
+                  >
+                    {value.list.map((winners) => {
+                      return (
+                        <View key={winners.qq} >{winners.name}({winners.qq})</View>
+                      )
+                    })}
+                  </AtCard>
+                </View>
+              )
+            }))
+          }
+        </ScrollView>
+      </View>
     )
 
 
@@ -283,13 +415,13 @@ export default class Index extends Component {
                     title='活动文案'
                     type='text'
                     placeholder='请输入文案'
-                    value={this.state.wenan}
-                    onChange={this.handleInputChange.bind(this, 'wenan')}
+                    value={this.state.writting}
+                    onChange={this.handleInputChange.bind(this, 'writting')}
                   />
                   <AtSwitch title='过滤教师/助教' checked={this.state.filterTeacher} onChange={this.handleSwitchChange.bind(this, 'teacher')} border={false} />
-                  <AtSwitch title='过滤活跃度低的人' checked={this.state.filterUnActive} onChange={this.handleSwitchChange.bind(this, 'unActive')} border={false} />
+                  <AtSwitch title='过滤活跃度低的人' checked={this.state.filtercountLimit} onChange={this.handleSwitchChange.bind(this, 'countLimit')} border={false} />
                   {
-                    this.state.filterUnActive === true
+                    this.state.filtercountLimit === true
                       ? inputAvtive
                       : null
                   }
@@ -303,6 +435,7 @@ export default class Index extends Component {
                     placeholder='格式： 2019-04-23 12:00'
                     value={this.state.start}
                     onChange={this.handleInputChange.bind(this, 'start')}
+                    onBlur={this.handleBlur.bind(this, 'start')}
                   />
                   <AtInput
                     name='value'
@@ -314,10 +447,10 @@ export default class Index extends Component {
                   />
                   <View style='font-size: 16px; margin-left: 18px'>
                     <Text>奖品内容</Text>
-                    <Text onClick={this.handleJxList.bind(this, 'add')} className='change' >          加一个   </Text>
-                    <Text onClick={this.handleJxList.bind(this, 'del')} className='change' >   减一个</Text>
+                    <Text onClick={this.handleawardList.bind(this, 'add')} className='change' >          加一个   </Text>
+                    <Text onClick={this.handleawardList.bind(this, 'del')} className='change' >   减一个</Text>
                   </View>
-                  {jxView}
+                  {awardView}
                 </ScrollView>
                 <AtButton type='primary' customStyle='margin-top: 20px;width: 80%' onClick={this.request} loading={this.state.requesting} disabled={this.state.requesting}>开始抽奖</AtButton>
               </AtTabsPane>
